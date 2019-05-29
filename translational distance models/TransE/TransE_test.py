@@ -23,6 +23,18 @@ def readData():
 
     return test_set
 
+def pk2txt(K):
+    embed_ent, embed_rel = loadModel()
+    with open('./TransE/entity2vec.unif', 'w') as f_ent:
+        for i in range(len(embed_ent)):
+            for j in range(K):
+                f_ent.write(str(embed_ent[i][j])+'\t')
+            f_ent.write('\n')
+    with open('./TransE/relation2vec.unif', 'w') as f_rel:
+        for i in range(len(embed_rel)):
+            for j in range(K):
+                f_rel.write(str(embed_rel[i][j])+'\t')
+            f_rel.write('\n')
 
 def loadModel():
     with open('./TransE/embedded_entity.pickle', 'rb') as f_ent:
@@ -85,7 +97,8 @@ def runMean(test_set, embed_ent, embed_rel):
                 break
 
 if __name__ == '__main__':
-    test_set = readData()
-    embed_ent, embed_rel = loadModel()
-    runHits(test_set, embed_ent, embed_rel)
+    # test_set = readData()
+    # embed_ent, embed_rel = loadModel()
+    # runHits(test_set, embed_ent, embed_rel)
+    pk2txt(50)
 
