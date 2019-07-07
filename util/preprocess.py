@@ -1,7 +1,7 @@
 # import pandas as pd
 import numpy as np
 
-dataset_path = '../data/fb15k/FB15K/'
+dataset_path = '../data/fb15k/FB15k/'
 
 if __name__ == '__main__':
     train = open(dataset_path + 'freebase_mtr100_mte100-train.txt')

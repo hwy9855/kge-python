@@ -7,7 +7,7 @@ import os
 
 Epoch = 1000
 lr = 0.05
-Lambda = 0.03
+Lambda = 0.1
 neg_ratio = 10
 kg_name = 'fb15k'
 

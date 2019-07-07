@@ -2,7 +2,7 @@ import numpy as np
 import pickle as pk
 from random import sample
 from copy import deepcopy
-import datetime
+import torch
 
 data_path = '../data/fb15k/'
 
@@ -20,7 +20,6 @@ tailrel = {}
 # d = L1
 # Optimal configuration for FB15K in paper
 
-st = datetime.datetime.now()
 
 def l1norm(vec):
     '''
@@ -28,7 +27,7 @@ def l1norm(vec):
     :return: l1-norm of vec
     '''
 
-    return np.linalg.norm(vec, 1)
+    return torch.norm(vec, 1)
 
 
 def readData():
@@ -91,6 +90,9 @@ def run(train_set):
 
     # init
 
+    embed_ent = torch.from_numpy(embed_ent)
+    embed_rel = torch.from_numpy(embed_rel)
+
     n_train = len(train_set)
 
     for i in range(Epoch):
@@ -106,9 +108,10 @@ def run(train_set):
 
 
             # loss
+
             print(k)
-            for kk in range(len(minibatch)):
-                S = minibatch[kk]
+            for k in range(len(minibatch)):
+                S = minibatch[k]
                 pair = []
                 pair.append(train_set[S])
                 S_broke = deepcopy(train_set[S])
@@ -123,7 +126,11 @@ def run(train_set):
                     S_broke[2] = broke
                 pair.append(S_broke)
                 T_batch.append(pair)
+
+            k = 0
             for pair in T_batch:
+                print(k)
+                k+=1
                 head = int(pair[0][0])
                 rel = int(pair[0][1])
                 tail = int(pair[0][2])
@@ -153,14 +160,14 @@ def run(train_set):
                     embed_ent[headCurrpted] = embed_ent[headCurrpted] - tmpNeg
                     embed_ent[tailCurrpted] = embed_ent[tailCurrpted] + tmpNeg
 
-                    embed_ent[head] = embed_ent[head] / np.linalg.norm(embed_ent[head])
-                    embed_rel[rel] = embed_rel[rel] / np.linalg.norm(embed_rel[rel])
-                    embed_ent[tail] = embed_ent[tail] / np.linalg.norm(embed_ent[tail])
-                    embed_ent[headCurrpted] = embed_ent[headCurrpted] / np.linalg.norm(embed_ent[headCurrpted])
-                    embed_ent[tailCurrpted] = embed_ent[tailCurrpted] / np.linalg.norm(embed_ent[tailCurrpted])
+                    embed_ent[head] = embed_ent[head] / torch.norm(embed_ent[head], 2)
+                    embed_rel[rel] = embed_rel[rel] / torch.norm(embed_rel[rel], 2)
+                    embed_ent[tail] = embed_ent[tail] / torch.norm(embed_ent[tail], 2)
+                    embed_ent[headCurrpted] = embed_ent[headCurrpted] / torch.norm(embed_ent[headCurrpted], 2)
+                    embed_ent[tailCurrpted] = embed_ent[tailCurrpted] / torch.norm(embed_ent[tailCurrpted], 2)
         if i % 20 == 19:
             model2pk(embed_ent, embed_rel)
-        print('epoch #' + str(i) + '\t loss:' + str(res) + '\t' + str(datetime.datetime.now()-st))
+        print('epoch #' + str(i) + '\t loss:' + str(res))
     return embed_ent, embed_rel
 
 
